@@ -1,0 +1,52 @@
+Documentation for the Route Table Evidence (Next Hop = Firewall):
+
+⸻
+
+📌 Route Table Configuration Evidence
+
+A User Defined Route (UDR) was implemented to ensure all outbound traffic from the virtual machine subnet is routed through the Azure Firewall for inspection and control.
+
+🔧 Configuration Details
+
+* Route Table Name: fw-route-table
+* Associated Subnet: test-vm-subnet (10.1.9.0/24)
+
+🌐 Route Definition
+
+* Route Name: default-route
+* Address Prefix: 0.0.0.0/0 (Default route for all outbound traffic)
+* Next Hop Type: Virtual Appliance
+* Next Hop IP Address: 10.1.10.4 (Azure Firewall private IP)
+
+⸻
+
+🔐 Purpose
+
+This configuration enforces forced tunneling, ensuring that:
+
+* All outbound traffic from the VM cannot go directly to the internet
+* Traffic is redirected to the Azure Firewall
+* The firewall can inspect, allow, or deny traffic based on defined rules
+
+⸻
+
+✅ Outcome
+
+* Verified that the route table is correctly applied to the VM subnet
+* Confirmed that Azure Firewall is acting as the Next Hop
+* Ensured centralized traffic control and improved network security
+
+⸻
+
+📸 Supporting Evidence
+
+A screenshot of the Route Table configuration (showing the route and subnet association) is included to validate:
+
+* 0.0.0.0/0 → Virtual Appliance → Firewall IP
+* Subnet association with test-vm-subnet
+
+⸻
+
+This satisfies the requirement:
+
+“Evidence of the Route Table configuration showing the firewall as the Next Hop.”

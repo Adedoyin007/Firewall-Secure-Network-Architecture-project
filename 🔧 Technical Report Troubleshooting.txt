@@ -1,0 +1,145 @@
+🔧 Technical Report: Troubleshooting Steps
+
+1. Azure Firewall Rule Configuration Issues
+
+Issue
+
+Initial firewall rules were incorrectly configured with:
+
+* Mixed rule types (IP addresses, Service Tags, and FQDNs in one network rule)
+* Overly permissive source (*)
+
+Action Taken
+
+* Simplified the Network Rule Collection to use only IP-based rules
+* Removed all entries from:
+    * Service Tags section
+    * FQDN section
+* Restricted source to the VM subnet (192.168.10.0/24)
+
+Outcome
+
+* Firewall rules became valid and aligned with Azure best practices
+* Traffic filtering behaved as expected
+
+⸻
+
+2. Rule Priority Conflict / Update Failure
+
+Issue
+
+While updating rule priorities, the following error occurred:
+
+“Another operation on this or dependent resource is in progress”
+
+Action Taken
+
+* Waited for Azure Firewall deployment to complete
+* Verified Provisioning State = Succeeded
+* Refreshed Azure portal before retrying
+
+Outcome
+
+* Rule priorities were successfully updated:
+    * NAT: 100
+    * Network: 200
+    * Application: 300
+
+⸻
+
+3. Incorrect Use of FQDN in Network Rules
+
+Issue
+
+FQDN (time.windows.com) was mistakenly added under a Network Rule
+
+Action Taken
+
+* Removed FQDN from Network Rule Collection
+* Ensured FQDN-based filtering is only used in Application Rule Collection
+
+Outcome
+
+* Clear separation of rule types:
+    * Network rules → IP-based
+    * Application rules → FQDN-based
+
+⸻
+
+4. Connectivity Testing Failures
+
+Issue
+
+Initial connectivity tests failed due to improper rule configuration and routing
+
+Action Taken
+
+* Verified firewall rules allowed outbound HTTP (port 80)
+* Ensured correct source and destination configuration
+* Retested connectivity from the VM
+
+Outcome
+
+* Successful outbound internet access confirmed
+* Unauthorized traffic remained blocked
+
+⸻
+
+5. Route Table Configuration Verification
+
+Issue
+
+Traffic was not properly routed through the firewall initially
+
+Action Taken
+
+* Configured a User Defined Route (UDR)
+* Set:
+    * Next Hop Type: Virtual Appliance
+    * Next Hop IP: Firewall private IP address
+
+Outcome
+
+* All traffic forced through Azure Firewall
+* Firewall rules effectively enforced
+
+⸻
+
+6. General Deployment Delays
+
+Issue
+
+Azure resources (especially Firewall) experienced delays during updates
+
+Action Taken
+
+* Avoided multiple rapid changes
+* Waited between deployments before applying new configurations
+
+Outcome
+
+* Reduced configuration errors
+* More stable deployment process
+
+⸻
+
+✅ Final Result
+
+After troubleshooting:
+
+* Firewall rules are correctly structured
+* Routing is properly enforced through the firewall
+* Allowed traffic flows successfully
+* Unauthorized traffic is blocked
+
+⸻
+
+📌 Key Lessons Learned
+
+* Always separate Network vs Application rules
+* Avoid mixing rule types in one collection
+* Use specific source IP ranges, not *
+* Allow time for Azure resources to fully deploy before making changes
+* Validate routing (UDR) alongside firewall rules
+
+⸻
